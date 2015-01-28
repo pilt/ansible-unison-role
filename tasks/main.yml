@@ -1,0 +1,28 @@
+---
+# tasks file for unison
+- name: Install OCaml compiler and make
+  apt:
+    pkg: "{{ item }}"
+    state: installed
+  with_items:
+  - ocaml-nox
+  - make
+- name: Download Unison
+  get_url:
+    url: http://www.seas.upenn.edu/~bcpierce/unison//download/releases/stable/unison-{{ unison_version }}.tar.gz
+    dest: /usr/local/src/unison-{{ unison_version }}.tar.gz
+- name: Unarchive Unison
+  unarchive:
+    copy: no
+    src: /usr/local/src/unison-{{ unison_version }}.tar.gz
+    dest: /usr/local/src
+- name: Build Unison
+  command: /usr/bin/make UISTYLE=text
+  args:
+    chdir: /usr/local/src/unison-{{ unison_version }}
+    creates: /usr/local/src/unison-{{ unison_version }}/unison
+- name: Create symlink to Unison executable in /usr/local/bin
+  file:
+    src: /usr/local/src/unison-{{ unison_version }}/unison
+    dest: /usr/local/bin/unison
+    state: link
