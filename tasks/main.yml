@@ -1,11 +1,14 @@
 ---
 # tasks file for unison
+- name: Add APT repo with more recent OCaml
+  apt_repository: repo='ppa:avsm/ocaml42+opam12'
 - name: Install OCaml compiler and make
   apt:
     pkg: "{{ item }}"
     state: installed
+    update_cache: yes
   with_items:
-  - ocaml-nox
+  - ocaml
   - make
 - name: Download Unison
   get_url:
